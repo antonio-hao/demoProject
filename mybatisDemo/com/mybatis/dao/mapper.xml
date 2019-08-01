@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="test">
+	<insert id="insertStudent" parameterType="Student">
+		<!-- 这里的#{}是个占位符，里面放的是属性名-->
+		insert into student(name,age,score) values(#{name},#{age},#{score})
+	</insert>
+	
+	<insert id="insertStudentCacheId" parameterType="Student">
+		insert into student(name,age,score) values(#{name},#{age},#{score})
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			select @@identity
+		</selectKey>
+	</insert>
+	
+	<delete id="deleteStudentById" parameterType="Student">
+		<!-- 这里的#{}仅仅是个占位符，里面放什么都可以-->
+		delete from student where id = #{id}
+	</delete>
+	
+	<update id="updateStudent" parameterType="Student">
+		update student set name=#{name},age=#{age},score=#{score} where id=#{id}
+	</update>
+	
+	<select id="selectAllStudents" parameterType="Student" resultType="Student">
+		select id,name,age,score from student;
+	</select>
+	
+	<select id="selectStudentById" parameterType="Student" resultType="Student">
+		select id,name,age,score from student where id=#{id};
+	</select>
+	
+	<select id="selectStudentsByName" parameterType="Student" resultMap="studentMapper">
+		<!--select id,name,age,score from student where name like concat('%',#{name},'%') -->
+		<!--select id,name,age,score from student where name like '%${name}%' -->
+		select id,name,age,score from student where name like '%' #{name} '%'
+	</select>
+	
+	<!-- 字段名与属性名不一致，map映射 -->
+	<resultMap type="Student" id="studentMapper">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="age" property="age"/>
+		<result column="score" property="score"/>
+	</resultMap>
+	
+	<select id="selectStudentsByCondition" parameterType="Student" resultType="Student">
+		select id,name,age,score from student where name like '%' #{nameCon} '%' 
+		and age > #{ageCon} and score > #{scoreCon.score}
+	</select>
+	
+	<select id="selectStudentsByCondition2" parameterType="Student" resultType="Student">
+		select id,name,age,score from student where name like '%' #{0} '%' and age > #{1}
+	</select>
+	<!-- 
+		#{}中可以放什么内容？
+		1.参数对象的属性
+		2.随意内容，此时的#{}是个占位符
+		3.参数为map时的key
+		4.参数为map时，若key所对应的value为对象，则可将该对象的属性放入
+		5.参数的索引号
+			 -->
+			 
+	<select id="selectStudentsByCondition3" parameterType="Student" resultType="Student">
+		select id,name,age,score from student
+		<where>
+			<if test="name != null and name != ''">
+				and name like '%' #{name} '%'
+			</if>
+			<if test="age > 0">
+				and age > #{age}
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectStudentsByChoose" parameterType="Student" resultType="Student">
+		select id,name,age,score from student
+		<where>
+			<choose>
+				<when test="name !=null and name !=''">
+					and name like '%' #{name} '%'
+				</when>
+				<when test="age > 0">
+					and age > #{age}
+				</when>
+				<otherwise>
+					1=2
+				</otherwise>
+			</choose>
+		</where>
+	</select>
+	
+	
+	<select id="selectStudentsByForeach" parameterType="Student" resultType="Student">
+		select id,name,age,score from student
+		<if test="array.length > 0">
+			where id in
+			<foreach collection="array" item="myid" open="(" close=")" separator=",">
+				#{myid}
+			</foreach>
+		</if>
+	</select>
+	
+		<select id="selectStudentsByForeach2" parameterType="Student" resultType="Student">
+		select id,name,age,score from student
+		<if test="list.size > 0">
+			where id in
+			<foreach collection="list" item="myid" open="(" close=")" separator=",">
+				#{myid}
+			</foreach>
+		</if>
+	</select>
+	
+	<select id="selectStudentsByForeach3" parameterType="Student" resultType="Student">
+		select <include refid="selectColumns"></include>
+		 from student
+		<if test="list.size > 0">
+			where id in
+			<foreach collection="list" item="stu" open="(" close=")" separator=",">
+				#{stu.id}
+			</foreach>
+		</if>
+	</select>
+	
+	<sql id="selectColumns">
+		id,name,age,score
+	</sql>
+</mapper>

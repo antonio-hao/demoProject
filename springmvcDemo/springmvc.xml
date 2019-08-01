@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+               	 http://www.springframework.org/schema/beans/spring-beans.xsd
+                 http://www.springframework.org/schema/context
+               	 http://www.springframework.org/schema/context/spring-context.xsd
+                 http://www.springframework.org/schema/aop 
+                 http://www.springframework.org/schema/aop/spring-aop.xsd
+                 http://www.springframework.org/schema/tx 
+        		 http://www.springframework.org/schema/tx/spring-tx.xsd">
+        		 
+ <!-- 	第一种视图解析器：注册内部资源视图解析器   
+  <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+  	<property name="prefix" value="/WEB-INF/jsp/"></property>
+  	<property name="suffix" value=".jsp"></property>
+  </bean> -->
+  
+	<!-- 第二种视图解析器：注册bean名称视图解析器 
+   <bean class="org.springframework.web.servlet.view.BeanNameViewResolver"></bean>
+    定义内部资源视图 
+   <bean id="welcome" class="org.springframework.web.servlet.view.JstlView">
+   		<property name="url" value="/WEB-INF/jsp/welcome.jsp"></property>
+   </bean>
+   定义外部资源视图
+   <bean id="taobao" class="org.springframework.web.servlet.view.RedirectView">
+   		<property name="url" value="http://www.taobao.com"></property>
+   </bean>
+   <bean id="baidu" class="org.springframework.web.servlet.view.RedirectView">
+   		<property name="url" value="http://www.baidu.com"></property>
+   </bean> -->
+   
+   <!-- 第三种视图解析器：注册xml视图解析器
+   <bean class="org.springframework.web.servlet.view.XmlViewResolver">
+   		<property name="location" value="classpath:myViews.xml"></property>
+   </bean>  
+    -->
+    
+    <!-- 第四种视图解析器：注册resource，properties视图解析器-->
+    <bean class="org.springframework.web.servlet.view.ResourceBundleViewResolver">
+    	<property name="basename" value="myviews"></property>
+    	<!-- 设置视图解析器执行顺序，不设置按注册顺序执行 ，value大于0，越小优先级越高-->
+    	<property name="order" value="3"></property>
+    </bean>
+   
+   
+   
+   
+   
+  <!-- 注册处理器映射器,不配置使用默认的，id=/my.do -->
+  <bean  class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+  	<!-- <property name="mappings">
+  		<props>
+  			<prop key="/my.do">myController</prop>
+  			<prop key="/hello.do">myController</prop>
+  		</props>
+  	</property> -->
+  	<property name="urlMap">
+  		<map>
+  			<entry key="/controller.do" value="myController"/>
+  			<entry key="/requestHandler.do" value="myHttpRequestHandler"/>
+  			<entry key="/abstractController.do" value="myAbstractController"/>
+  		</map>
+  	</property>
+  </bean>  
+    		 
+  <!-- 注册实现Controller接口的处理器 -->
+  <bean id="myController" class="com.springmvc.handlers.MyController"></bean>
+  <!-- 注册实现HttpRequestHandler接口的处理器 -->      		 
+  <bean id="myHttpRequestHandler" class="com.springmvc.handlers.MyHttpRequestHandler"></bean> 
+  <!-- 注册继承AbstractController的处理器，支持限定请求的提交方式 -->
+  <bean id="myAbstractController" class="com.springmvc.handlers.MyAbstractController">
+  	<property name="supportedMethods" value="POST"></property>
+  </bean>          		 
+  </beans>
+  

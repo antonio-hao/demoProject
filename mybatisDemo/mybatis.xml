@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+  
+<configuration>
+	
+	<!-- 注册JDBC配置文件 -->
+	<properties resource="jdbc_mysql.properties"></properties>
+	
+	<!-- 设置整个应用所使用的常量 -->
+	<settings>
+		<!-- 延迟加载总开关 -->
+		<setting name="lazyLoadingEnabled" value="true" />
+		<!-- 侵入式加载开关 -->
+		<setting name="aggressiveLazyLoading" value="false" />
+	</settings>
+	
+	<!-- 定义类别名 -->
+	<typeAliases>
+		<!-- <typeAlias type="com.mybatis.entity.Student" alias="Student"/> -->
+		<!-- 把指定包下的所有类的简单类名当作其别名 -->
+		<package name="com.mybatis.entity"/>
+	</typeAliases>
+	
+	<!-- 配置运行环境 -->
+  	<environments default="mysqlEM">
+  		<environment id="mysqlEM">
+  			<transactionManager type="JDBC"></transactionManager>
+  			<dataSource type="POOLED">
+  				<property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+  			</dataSource>
+  		</environment>
+  	</environments>
+  	
+  	<!-- 注册映射文件 -->
+  	<mappers>
+  		<mapper resource="com/mybatis/dao/mapper.xml"/>
+  		<mapper resource="com/mybatis/dao/iCountrymapper.xml"/>
+  		<mapper resource="com/mybatis/dao/iCarmapper.xml"/>
+  		<mapper resource="com/mybatis/dao/iNewsLabelmapper.xml"/>
+  		<mapper resource="com/mybatis/dao/studentCoursemapper.xml"/>
+  	</mappers>
+</configuration>
